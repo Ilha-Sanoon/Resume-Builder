@@ -1,0 +1,129 @@
+<div class="editor-page">
+  <header class="editor-top">
+    <a href="/dashboard">← Dashboard</a>
+    <div><b>{{resume.name}} — CV</b><span>● {{saveStatus}}</span></div>
+    <div class="editor-actions"><button class="ghost" type="button" (click)="saveResume()">Save</button><label class="format-picker">Select type<select [(ngModel)]="downloadFormat"><option value="html">HTML</option><option value="pdf">PDF</option><option value="jpg">JPG</option><option value="jpeg">JPEG</option></select></label><button class="pill dark" type="button" (click)="downloadResume()">Download</button></div>
+  </header>
+
+  <div class="editor-layout">
+    <!-- LEFT PANEL: EDITOR -->
+    <section class="editor-panel">
+      <div class="editor-title">
+        <div><span class="kicker">STEP 02 · EDIT</span><h1>Build your story.</h1></div>
+        <span class="tip">⌘ Save</span>
+      </div>
+
+      <!-- Personal Section -->
+      <div class="editor-section">
+        <h3>Personal</h3>
+        <div class="photo-upload">
+          <div class="photo-circle" [style.backgroundImage]="photo.startsWith('data:') ? 'url(' + photo + ')' : 'none'">
+            {{!photo.startsWith('data:') ? photo : ''}}
+          </div>
+          <label class="upload-btn">
+            Upload photo
+            <input type="file" accept="image/*" (change)="onPhotoUpload($event)">
+          </label>
+          <small>JPG or PNG · recommended 400×400</small>
+        </div>
+        <div class="input-grid">
+          <label>Full name<input [(ngModel)]="resume.name"></label>
+          <label>Professional title<input [(ngModel)]="resume.title"></label>
+          <label>Email<input [(ngModel)]="resume.email"></label>
+          <label>Phone<input [(ngModel)]="resume.phone"></label>
+          <label class="wide">Location<input [(ngModel)]="resume.location"></label>
+        </div>
+      </div>
+
+      <!-- Profile Section -->
+      <div class="editor-section">
+        <h3>Profile <span>Write in your own voice</span></h3>
+        <div class="text-editor">
+          <div class="toolbar">
+            <button type="button" (click)="applyFormat('bold', profileTextarea)" title="Bold"><b>B</b></button>
+            <button type="button" (click)="applyFormat('italic', profileTextarea)" title="Italic"><i>I</i></button>
+            <button type="button" (click)="applyFormat('list', profileTextarea)" title="List">•</button>
+          </div>
+          <textarea #profileTextarea [(ngModel)]="resume.profile" rows="4"></textarea>
+        </div>
+      </div>
+
+      <!-- Experience Section -->
+      <div class="editor-section">
+        <h3>Experience <button (click)="addExperience()">＋ Add</button></h3>
+        <div *ngFor="let exp of resume.experience; let i = index; trackBy: trackByIndex" class="repeat">
+          <div class="text-editor">
+            <div class="toolbar">
+              <button type="button" (click)="applyFormat('bold', expTextarea)" title="Bold"><b>B</b></button>
+              <button type="button" (click)="applyFormat('italic', expTextarea)" title="Italic"><i>I</i></button>
+              <button type="button" (click)="applyFormat('list', expTextarea)" title="List">•</button>
+            </div>
+            <textarea #expTextarea [(ngModel)]="resume.experience[i]" placeholder="Job title · Company · Year — Year"></textarea>
+          </div>
+          <button (click)="removeExperience(i)" class="remove-btn">×</button>
+        </div>
+      </div>
+
+      <!-- Education Section -->
+      <div class="editor-section">
+        <h3>Education <button (click)="addEducation()">＋ Add</button></h3>
+        <div *ngFor="let edu of resume.education; let i = index; trackBy: trackByIndex" class="repeat">
+          <div class="text-editor">
+            <div class="toolbar">
+              <button type="button" (click)="applyFormat('bold', eduTextarea)" title="Bold"><b>B</b></button>
+              <button type="button" (click)="applyFormat('italic', eduTextarea)" title="Italic"><i>I</i></button>
+              <button type="button" (click)="applyFormat('list', eduTextarea)" title="List">•</button>
+            </div>
+            <textarea #eduTextarea [(ngModel)]="resume.education[i]" placeholder="Degree · School · Year"></textarea>
+          </div>
+          <button (click)="removeEducation(i)" class="remove-btn">×</button>
+        </div>
+      </div>
+
+      <!-- Skills Section -->
+      <div class="editor-section">
+        <h3>Skills</h3>
+        <div class="text-editor">
+          <div class="toolbar">
+            <button type="button" (click)="applyFormat('bold', skillsTextarea)" title="Bold"><b>B</b></button>
+            <button type="button" (click)="applyFormat('italic', skillsTextarea)" title="Italic"><i>I</i></button>
+            <button type="button" (click)="applyFormat('list', skillsTextarea)" title="List">•</button>
+          </div>
+          <textarea #skillsTextarea [(ngModel)]="resume.skills" placeholder="Skills separated by ·"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: PREVIEW -->
+    <section class="preview-panel">
+      <div class="preview-header"><span class="kicker">LIVE PREVIEW</span></div>
+      <div #resumePreview [ngClass]="['paper', templateStyle, noPhotoTemplate() ? 'no-photo' : '']">
+        <div class="preview-photo" *ngIf="!noPhotoTemplate()">
+          <div class="preview-photo-circle" [style.backgroundImage]="photo.startsWith('data:') ? 'url(' + photo + ')' : 'none'">
+            {{!photo.startsWith('data:') ? photo : ''}}
+          </div>
+        </div>
+        <h1>{{resume.name}}</h1>
+        <p class="preview-title">{{resume.title}}</p>
+        <p class="preview-contact">{{resume.location}} · {{resume.email}} · {{resume.phone}}</p>
+        <hr>
+        <div class="preview-section" *ngIf="resume.profile">
+          <h4>PROFILE</h4>
+          <p [innerHTML]="formatText(resume.profile)"></p>
+        </div>
+        <div class="preview-section" *ngIf="resume.experience.length > 0">
+          <h4>EXPERIENCE</h4>
+          <p *ngFor="let exp of resume.experience" [innerHTML]="formatText(exp)"></p>
+        </div>
+        <div class="preview-section" *ngIf="resume.education.length > 0">
+          <h4>EDUCATION</h4>
+          <p *ngFor="let edu of resume.education" [innerHTML]="formatText(edu)"></p>
+        </div>
+        <div class="preview-section" *ngIf="resume.skills">
+          <h4>SKILLS</h4>
+          <p [innerHTML]="formatText(resume.skills)"></p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
