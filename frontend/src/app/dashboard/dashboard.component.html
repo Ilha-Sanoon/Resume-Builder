@@ -1,0 +1,23 @@
+<div class="dashboard-container"><nav class="nav"><a class="logo" routerLink="/"><span>FF</span> Folio.field</a><div class="links"><a class="active">Dashboard</a><a routerLink="/templates">Templates</a><a href="#download">Download</a></div><div class="nav-actions"><a routerLink="/auth?mode=login" class="signin">Login</a><a routerLink="/templates" class="pill dark">Create CV</a></div></nav><main class="dashboard-main"><div class="welcome"><div><span class="kicker">MY WORKSPACE</span><h1>{{greeting}}, {{user.name}}.</h1><p>Let's make your next application your best one yet.</p>@if(user.email){<small class="dashboard-email">Signed in as {{user.email}}</small>}</div></div><div class="dashboard-stats">
+<div class="stat-card">
+  <span class="stat-badge badge-green">📋</span>
+  <div class="stat-content">
+    <small>YOUR RESUMES</small>
+    <strong>{{resumes.length}}</strong>
+  </div>
+</div>
+<div class="stat-card">
+  <span class="stat-badge badge-orange">📅</span>
+  <div class="stat-content">
+    <small>LAST EDITED</small>
+    <strong>Today</strong>
+  </div>
+</div>
+<div class="stat-card">
+  <span class="stat-badge badge-blue">🕐</span>
+  <div class="stat-content">
+    <small>TEMPLATES</small>
+    <strong>6</strong>
+  </div>
+</div>
+</div><section class="resume-area"><div class="section-head"><h2>Your resumes</h2><a routerLink="/templates">View templates →</a></div>@if(resumes.length){<div class="saved-resumes">@for(resume of resumes;track resume.id){<article class="saved-resume"><div><span class="kicker">SAVED CV</span><h3>{{resume.name}}</h3><p>{{resume.targetRole}} · {{resume.template}}</p>@if(resume.location){<p>{{resume.location}}</p>}</div><a routerLink="/editor" [queryParams]="{template: resume.template, resumeId: resume.id}" class="pill dark">Open CV →</a></article>}</div>}@else{<div class="empty-resume"><div class="plus">＋</div><h3>Your first CV starts here.</h3><p>Pick a template and turn your experience into a polished resume.</p><a routerLink="/templates" class="pill dark">Choose a template</a></div>}</section></main></div>
